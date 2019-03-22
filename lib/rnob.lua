@@ -1,6 +1,5 @@
 -- build a JI rate knob that goes through zero
-local dust = '/home/emb/dust'
-local ji = dofile(dust..'/emb/lib/ji.lua')
+local ji = dofile(_path.code .. 'zebra/lib/ji.lua')
 
 -- the gamut
 local gam = ji.partch()

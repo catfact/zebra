@@ -1,6 +1,6 @@
 // Zsins
 // a lot of sines
-Zsins : CroneEngine {
+Engine_Zsins : CroneEngine {
 	classvar num;
 	var <synth;
 
