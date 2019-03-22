@@ -20,23 +20,23 @@ gam.f = function(i)
    else return gam[i][1] / gam[i][2] end
 end
 
-octa = 3 -- octaves above
-octb = 3 -- octaves below
+local octa = 3 -- octaves above
+local octb = 3 -- octaves below
 
-r = 0 -- current ratio
-o = nil -- current octave
-i = 0 -- current index
+local r = 0 -- current ratio
+local o = nil -- current octave
+local i = 0 -- current index
 
-pval = {} -- list of positive values
+local pval = {} -- list of positive values
 
-plo = 2 ^ (-1 * octb) -- positive lower bound
-phi = 2 ^ (octa) -- positive upper bound
+local plo = 2 ^ (-1 * octb) -- positive lower bound
+local phi = 2 ^ (octa) -- positive upper bound
 
 --[[
 --- add from zero
 while i < n do
    i = i + 1
-   -- TODO: linear portion
+   -- TODO: linear portion?
 ------- actually i don't think we need this? hm
 end 
 --]]
@@ -51,7 +51,7 @@ while o < octa do
        i=i+1
        --print(i)
        if (o<0) then 
-	  pval[#pval + 1] = gam.fdiv(i, 2^(-1*o))
+	  pval[#pval + 1] = gam.fdiv(i, 2^(-1*o))	  
        else
 	  pval[#pval + 1] = gam.fmul(i, 2^o)
        end
@@ -62,7 +62,7 @@ end
 pval[#pval + 1] = { phi, 1};
 
 -- build bipolar values
-bval = {}
+local bval = {}
 
 i = #pval
 print("negative...")
@@ -84,6 +84,12 @@ end
 
 print("done.")
 
+pval = nil
+local nob = {}
 for k,v in pairs(bval) do
-   print (""..k.."\t"..v[1].."/"..v[2].."\t = "..v[1]/v[2])
+   nob[k] = { v[1], v[2], v[1]/v[2] }
+   -- print (""..k.."\t"..v[1].."/"..v[2].."\t = "..v[1]/v[2])
 end
+
+bval = nil
+return nob
