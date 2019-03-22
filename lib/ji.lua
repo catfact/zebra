@@ -1,4 +1,4 @@
--- "just" some intonation tables
+-- some just intonation tables
 
 local JI = {}
 

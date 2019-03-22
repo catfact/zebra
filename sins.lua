@@ -2,33 +2,50 @@
 
 -- linear plus ji sine instrument
 
-engine = 'Sines'
+engine = 'zsins'
+
+local nob = dofile(script_dir..'zebra/lib/rnob.lua')
 
 local finc = 4
 local fincrand = 2
 
-local State = {}
-State.__index = State
-State.new = function()
+local OscState = {}
+OscState.__index = OscState
+OscState.new = function()
   local s = {}
   s.f = 220 -- ui linear freq
   s.ri = 1 -- ratio knob index
-  s.v = 1 -- ui voice select
-  s.a = 0 -- ui linear amp
-  s.metaTable = State
+  s.a = 0 -- linear amp
+  s.metaTable = OscState
   return s
 end
 
-local state = State.new()
-local state2 = State.new() --- "its extra"
 
-init = function() end
+local UiState = {}
+UiState.__index = UiState
+UiState.new = function()
+  local s = {}
+  s.fn = nil -- ui function array
+  s.v = 1 -- voice select
+  s.metaTable = UiState
+  return s
+end
 
-enc = function(n,z) state.uifn.enc[n](z) end
-key = function(n,z) state.uifn.key[n](z) end
+local o = OscState.new()
+local u = UiState.new()
+
+init = function() 
+  u.v = 1
+end
+
+enc = function(n,z) u.uifn.enc[n](z) end
+key = function(n,z) u.uifn.key[n](z) end
+
+local keyfn = {
+  
+}
 
 local uifn = {
-
   none = {
     enc={function(z) end, function(z) end},
     key={function(z) end, function(z) end}
@@ -37,19 +54,23 @@ local uifn = {
   one = {
     enc={
       function(z)
-        state.f = state.f + finc + math.random(fincrand)
-        engine.hz(1, state.v, state.f * state.r)
+        o.f = o.f + finc + math.random(fincrand)
+        engine.hz(1, u.v, o.f * nob[o.ri])
       end,
       function(z)
-        state.ri = 
-        engine.hz(1, state.v, state.f * nob[state.ri])
+        o.ri = o.ri + z
+        if o.ri < 1 then o.ri = 1
+        elseif o.ri > #nob then o.ri = #nob
+        end 
+        engine.hz(1, u.v, o.f * nob[o.ri])
       end,
-
+    },
     key={
       function(z)      
         engine.hz(1, state.v, state.f * state.r)
       end,
     }
   }
+}
 
-state.uifn = uifn.one
+ustate.fn = uifn.one
