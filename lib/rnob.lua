@@ -50,9 +50,9 @@ while o < octa do
        i=i+1
        --print(i)
        if (o<0) then 
-	  pval[#pval + 1] = gam.fdiv(i, 2^(-1*o))	  
+	       pval[#pval + 1] = gam.fdiv(i, 2^(-1*o))	  
        else
-	  pval[#pval + 1] = gam.fmul(i, 2^o)
+	       pval[#pval + 1] = gam.fmul(i, 2^o)
        end
     end
     o = o + 1
@@ -88,6 +88,16 @@ local nob = {}
 for k,v in pairs(bval) do
    nob[k] = { v[1], v[2], v[1]/v[2] }
    -- print (""..k.."\t"..v[1].."/"..v[2].."\t = "..v[1]/v[2])
+end
+
+
+for k,v in pairs(nob) do 
+--  if v[1] == -1 and v[2] == 1 then nob.negone = k
+--  elseif v[1] == 0 then nob.zero = k
+--  elseif v[1] == 1 and v[2] == 1 then nob.one = k end
+  if v[1] == -1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
+  if v[1] == 0 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
+  if v[1] == 1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
 end
 
 bval = nil
