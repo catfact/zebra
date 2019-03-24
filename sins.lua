@@ -89,8 +89,8 @@ local uifn = {
           engine.hz(u.v, o[u.v].f * nob[o[u.v].ri][3])
 	      else
 	        o[u.v].pan = o[u.v].pan + z*0.1
-          if o[u.v].pan < -1 then o[u.v] = -1 end
-          if o[u.v].pan > 1 then o[u.v] = 1 end      
+          if o[u.v].pan < -1 then o[u.v].pan = -1 end
+          if o[u.v].pan > 1 then o[u.v].pan = 1 end      
 	        engine.pan(u.v, o[u.v].pan)
 	      end
     end
