@@ -22,7 +22,7 @@ Engine_RedFrikTweets : CroneEngine {
 			gidx = msg[1]-1;
 			tidx = msg[2]-1;
 			if(tweet_g[gidx].notNil, { tweet_g[gidx].free; });
-			tweet_g[gidx] = Group.new(context.xg);x
+			tweet_g[gidx] = Group.new(context.xg);
 			if(tidx >= numTweets, { tidx = numTweets - 1; });
 			if(tidx < 0, { tidx = 0; });
 			RedFrikTweets.tweets[tidx].value(tweet_g[gidx]);
