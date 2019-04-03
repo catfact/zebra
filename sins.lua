@@ -109,22 +109,61 @@ local uifn = {
     },
     draw=function()
       screen.clear()
-      screen.font_face(1)
-      screen.font_size(8)
-      screen.move(10, 20)
-      screen.text("A = "..o[u.v].a)
-      screen.move(60, 20)
-      screen.text("R = "..nob[o[u.v].ri][1])
-      screen.move(100, 20)
-      screen.text("/ "..nob[o[u.v].ri][2])
-      screen.move(20, 60)
-      screen.text("V = "..u.v)
-      screen.move(20, 40)
-      screen.text("F = "..o[u.v].f)
-      screen.move(60, 40)
-      screen.text("P = "..o[u.v].pan)
+
+      screen.level(15)
+      --------------
+      -- draw numbers
+
+      screen.aa(0)
+      screen.aa(0)
+      screen.aa(0)
+
+      --screen.font_face(44)
+      --screen.font_size(12)
+      screen.font_face(39)
+      screen.font_size(12)
+      screen.move(1, 8)
+      screen.text("A= "..o[u.v].a)
+      screen.move(54, 8)
+      screen.text("R= "..nob[o[u.v].ri][1].."/"..nob[o[u.v].ri][2])
+      screen.move(1, 20)
+      screen.text("F= "..o[u.v].f)
+      screen.move(54, 20)
+      screen.text("P= "..o[u.v].pan)
+      
+      -----------
+      -- draw dots
+      local ampStr = ""
+      local selStr = ""
+
+      for i=1,numSines do
+        if o[i].a > 0.25 then 
+          ampStr = ampStr.."#"
+        elseif o[i].a > 0 then
+          ampStr = ampStr.."|"
+        else
+          ampStr = ampStr.."."
+        end
+        if i == u.v then
+          selStr = selStr.."^"
+        else 
+          selStr = selStr.." "
+        end
+      end 
+
+      screen.font_face(25)
+      screen.font_size(6)
+
+      screen.move(96, 32)
+      screen.text("V= "..u.v)
+
+      screen.move(1, 48)
+      screen.text(ampStr)
+      screen.move(1, 58)
+      screen.text(selStr)
       screen.update()
     end
+      
   }
 }
 
