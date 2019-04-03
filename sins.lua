@@ -1,11 +1,46 @@
--- sins
+-- scriptname: sins
+-- v1.0.0 @catfact / @zebra
 
--- linear plus ji sine instrument
+-- ultra-minimal sine-wave instrument
+
+-- explores beatings
+-- no memory
+-- linear / octave
+-- grabs hz (input 1)
+
+-- key 1: (hold) mode select: 'mod')
+--        (lift) mode select: 'none')
+
+-- key 2: (press)
+--        [mode == 'mod']:
+--           grab pitch,
+--           sub-mode select: 'grab'
+--        [mode == 'none']
+--           enc 2 assign: set freq
+--        (lift)
+--           sub-mode select: 'none'
+--           enc 2 assign: set amp
+
+-- key 3: (press)
+--        [mode == 'mod']:
+--           toggle amp mod
+--        [mode == 'none']:
+--           enc 3 assign: set pan
+--        (lift)
+--        enc 3 assign: set ratio
+
+-- enc 1: [sub-mode == 'grab']
+--           select voice, grab pitch   
+--        [sub-mode == 'toggle']
+--           select voice, toggle amp mod
+--        [sub-mode == 'none']
+--           select voice
+
+-- enc 2,  enc3: follow assignment
 
 engine.name = 'Zsins'
 
 nob = dofile(_path.code .. 'zebra/lib/rnob.lua')
-
 
 local hz_in = -1
 
@@ -16,6 +51,7 @@ OscState.new = function()
   s.f = 220   -- ui linear freq
   s.ri = 390  -- fixme: magic! 
   s.a = 0     -- ui linear amp
+  s.am = 1    -- DC amp modulator
   s.pan = 0   -- ui pan
   s.metaTable = OscState
   return s
@@ -31,6 +67,7 @@ UiState.new = function()
   s.e2 = 'ratio' -- encoder 2 function	
   s.mod = false  -- mod switch flag
   s.setHz = false -- setting-frequency flag
+  s.togAmp = false -- toggling-amplitude flag
   s.metaTable = UiState
   return s
 end
@@ -43,7 +80,6 @@ local numSines = 32
 function cleanup()
   -- nothing to do?
 end
-
 
 ----------------
 --- helper functions
@@ -72,6 +108,7 @@ local function inc_pan(inc)
   if o[u.v].pan < -1 then o[u.v].pan = -1 end
   if o[u.v].pan > 1 then o[u.v].pan = 1 end      
 	engine.pan(u.v, o[u.v].pan)
+	redraw()
 end
 
 local function inc_voice(inc)
@@ -79,6 +116,15 @@ local function inc_voice(inc)
   if u.v < 1 then u.v = 1 end
   if u.v > numSines then u.v = numSines end
 end
+
+
+local function tog_amp()
+  if o[u.v].am > 0 then o[u.v].am = 0 
+  else o[u.v].am = 1 end
+  engine.am_add(u.v, o[u.v].am)
+  redraw()
+end
+
 
 local function round_hz (hz) 
   return math.floor(hz * 100) * 0.01
@@ -103,9 +149,8 @@ function enc(n,z)
   else
     --- key 1 selects voice or scrubs hz grab
     if z > 0 then inc_voice(1) else inc_voice(-1) end
-    if u.setHz then
-      grab_hz()
-    end
+    if u.setHz then grab_hz() end
+    if u.togAmp then tog_amp() end
   end
   redraw()
 end
@@ -118,7 +163,6 @@ function key(n,z)
 end
 
 function redraw() u.fn.draw() end
-
 
 --------------------
 --- local UI
@@ -148,7 +192,8 @@ local uifn = {
     end
     }, 
     key={
-      --- key 1: select enc1 function
+
+--- key 1: select enc1 function
       function(z)
         if u.mod then
           if z > 0 then   -- press
@@ -156,8 +201,9 @@ local uifn = {
             grab_hz()
           else            -- lift
             u.setHz = false
+  	        u.e1 = 'amp'
           end
-        else  --- no mod
+        else              -- no mod
           print("key 1, no mod: "..z)
   	      if z > 0 then   -- press
   	        u.e1 = 'freq'
@@ -165,14 +211,25 @@ local uifn = {
   	        u.e1 = 'amp'
   	      end
   	    end
-      end, -- end mod check
-      -- key 2: select enc2 function
+      end,                 -- end mod check
+
+-- key 2: select enc2 function
       function(z)
-	      if z > 0 then   -- press
-	        u.e2 = 'pan'
-	      else            -- lift
-	        u.e2 = 'ratio'
-	      end
+        if u.mod then
+	        if z > 0 then   -- press
+            u.togAmp = true
+            tog_amp()
+          else            -- lift
+            u.togAmp = false
+	          u.e2 = 'ratio'
+          end
+	      else              -- no mod
+          if z > 0 then   -- press
+	          u.e2 = 'pan'
+	        else            -- lift
+	          u.e2 = 'ratio'
+	        end
+	      end               -- end mod check
       end
     },
   
@@ -194,7 +251,7 @@ local uifn = {
       screen.text("R= "..nob[o[u.v].ri][1].."/"..nob[o[u.v].ri][2])
       screen.move(1, 20)
       screen.text("F= "..o[u.v].f)
-      screen.move(54, 20)
+      screen.move(64, 20)
       screen.text("P= "..o[u.v].pan)
       
       -----------
@@ -204,9 +261,17 @@ local uifn = {
 
       for i=1,numSines do
         if o[i].a > 0.25 then 
-          ampStr = ampStr.."#"
+          if o[i].am > 0 then
+            ampStr = ampStr.."#"
+          else 
+            ampStr = ampStr.."-"
+          end
         elseif o[i].a > 0 then
-          ampStr = ampStr.."|"
+          if o[i].am > 0 then
+            ampStr = ampStr.."|"
+          else 
+            ampStr = ampStr.."-"
+          end
         else
           ampStr = ampStr.."."
         end
@@ -238,6 +303,8 @@ function init()
   u.fn = uifn.one 
   for i=1,numSines do
     o[i] = OscState.new()
+    engine.am_mul(i, 0)
+    engine.am_add(i, 1)
   end
   
   local p_pitch = poll.set('pitch_in_l', function(hz) hz_in = hz end)
