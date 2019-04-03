@@ -2,7 +2,7 @@ engine.name = 'ZSines'
 
 local font_face = 1
 local font_size = 6
-local num_fonts = 70
+local num_fonts = 67
 local min_size = 4
 local max_size = 18
 local aa = 0
