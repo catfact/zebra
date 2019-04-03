@@ -5,13 +5,18 @@ local font_size = 6
 local num_fonts = 70
 local min_size = 4
 local max_size = 18
+local aa = 0
 
 function init() 
 end 
   
 function redraw() 
   screen.clear()
-  screen.aa(0)
+  screen.aa(aa)
+  screen.font_face(1)
+  screen.font_size(8)
+  screen.move(1, 8)
+  screen.text("aa = "..aa)
   screen.font_face(font_face)
   screen.font_size(font_size)
   screen.move(1, 20)
@@ -21,6 +26,13 @@ function redraw()
   screen.move(1, 60)
   screen.text("quickbrownfox jumplazydog")
   screen.update()
+end
+
+function key(n,z) 
+  if n == 2 and z > 0 then 
+    if aa > 0 then aa = 0 else aa = 1 end
+    redraw()
+  end
 end
 
 function enc(n,z) 
