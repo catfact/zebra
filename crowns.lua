@@ -1,42 +1,6 @@
 -- scriptname: sins
--- v1.0.0 @catfact / @zebra
+-- v0.0.0 @catfact / @zebra
 
--- ultra-minimal sine-wave instrument
-
--- explores beatings
--- no memory
--- linear / octave
--- grabs hz (input 1)
-
--- key 1: (hold) mode select: 'mod')
---        (lift) mode select: 'none')
-
--- key 2: (press)
---        [mode == 'mod']:
---           grab pitch,
---           sub-mode select: 'grab'
---        [mode == 'none']
---           enc 2 assign: set freq
---        (lift)
---           sub-mode select: 'none'
---           enc 2 assign: set amp
-
--- key 3: (press)
---        [mode == 'mod']:
---           toggle amp mod
---        [mode == 'none']:
---           enc 3 assign: set pan
---        (lift)
---        enc 3 assign: set ratio
-
--- enc 1: [sub-mode == 'grab']
---           select voice, grab pitch   
---        [sub-mode == 'toggle']
---           select voice, toggle amp mod
---        [sub-mode == 'none']
---           select voice
-
--- enc 2,  enc3: follow assignment
 
 engine.name = 'Zsins'
 
@@ -299,6 +263,22 @@ local uifn = {
   }
 }
 
+
+-------
+-- grid stuff
+
+local g = grid.connect()
+local gc = dofile(_path.code .. 'zebra/lib/grid_cut.lua')
+
+function g.key(x, y, z) 
+  gc.handle_grid_key(x, y, z)
+end 
+
+function gridredraw()
+  gc.draw_grid(g)
+end
+------------
+---- INIT
 function init() 
   u.fn = uifn.one 
   for i=1,numSines do
@@ -309,4 +289,7 @@ function init()
   
   local p_pitch = poll.set('pitch_in_l', function(hz) hz_in = hz end)
   p_pitch:start()
+
+  gc.init()
 end
+

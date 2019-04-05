@@ -1,7 +1,7 @@
 -- cross
 -- @zebra
 
--- softcut cross-patch test
+-- softcut cross-patch test / demo
 
 engine.name = 'Zsins'
 

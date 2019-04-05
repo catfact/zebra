@@ -1,3 +1,5 @@
+---- TODO: make this a module with creation arguments, &c
+
 -- build a JI rate knob that goes through zero
 local ji = dofile(_path.code .. 'zebra/lib/ji.lua')
 
@@ -30,15 +32,6 @@ local pval = {} -- list of positive values
 
 local plo = 2 ^ (-1 * octb) -- positive lower bound
 local phi = 2 ^ (octa) -- positive upper bound
-
---[[
---- add from zero
-while i < n do
-   i = i + 1
-   -- TODO: linear portion?
-------- actually i don't think we need this? hm
-end 
---]]
 
 -- generating 
 
@@ -87,14 +80,10 @@ pval = nil
 local nob = {}
 for k,v in pairs(bval) do
    nob[k] = { v[1], v[2], v[1]/v[2] }
-   -- print (""..k.."\t"..v[1].."/"..v[2].."\t = "..v[1]/v[2])
 end
 
 
 for k,v in pairs(nob) do 
---  if v[1] == -1 and v[2] == 1 then nob.negone = k
---  elseif v[1] == 0 then nob.zero = k
---  elseif v[1] == 1 and v[2] == 1 then nob.one = k end
   if v[1] == -1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
   if v[1] == 0 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
   if v[1] == 1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
