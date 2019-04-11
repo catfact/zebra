@@ -35,8 +35,9 @@ redraw = function()
   screen.text("t1 ", t1)
   screen.move(50, 20)
   screen.text("t2 ", t2)
-  screen.move(30,0)
-  screen.text("t1 ", tweets[t1])
+  screen.move(0,30)
+  screen.text(tweets[t1]:sub(1,math.ceil(#tweets[t1]/2)))
+  screen.move(0,40)
+  screen.text(tweets[t1]:sub(math.ceil(#tweets[t1]/2),-1))
   screen.update()
 end
-
