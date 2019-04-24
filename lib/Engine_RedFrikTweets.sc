@@ -28,6 +28,12 @@ Engine_RedFrikTweets : CroneEngine {
 			RedFrikTweets.tweets[tidx].value(tweet_g[gidx]);
 		});
 	}
+	
+	free { 
+	  tweet_g.do { arg g;
+	    if (g.notNil, {g.free;});
+	  }
+	 }
 
 
 }
