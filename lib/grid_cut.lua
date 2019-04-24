@@ -1,5 +1,6 @@
 
 local gc = {}
+local audio = require 'audio'
 
 -- ptolemaic, minor, pentatonic kinda thing 
 gc.rates = {
@@ -125,7 +126,7 @@ gc.init = function()
     -- cut global
     audio.level_cut(1.0)
     audio.level_adc_cut(1.0)
-    audio.level_ext_cut(1)
+    audio.level_eng_cut(1)
 
     local cut_pans = {0.125, 0.25, 0.5, 0.75, 0.875} --{ -0.5, -0.25, 0.25, 0.5 }
 
