@@ -15,7 +15,10 @@ Engine_Zsins : CroneEngine {
 	alloc {
 		var server = Crone.server;
 		var def = SynthDef.new(\zsin, {
-			arg out, hz=220, amp=0.0, amp_atk=0.001, amp_rel=0.05, hz_lag=0.005, pan=0, pan_lag=0.005, am_in=0, am_mul=0, am_add=1.0;
+			arg out, hz=220, hz_lag=0.005, 
+				amp=0.0, amp_atk=0.001, amp_rel=0.05,
+				pan=0, pan_lag=0.005, 
+				am_in=0, am_mul=0, am_add=1.0;
 			var amp_mod, amp_, hz_, pan_;
 			amp_ = LagUD.ar(K2A.ar(amp), amp_atk, amp_rel);
 			amp_mod = SoundIn.ar(am_in) * LagUD.ar(K2A.ar(am_mul), amp_atk, amp_rel) + LagUD.ar(K2A.ar(am_add), amp_atk, amp_rel);
