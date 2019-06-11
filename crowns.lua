@@ -36,8 +36,9 @@ UiState.new = function()
   return s
 end
 
-local o = {}
-local u = UiState.new()
+
+local o = {} -- array of oscillator state
+local u = UiState.new() -- ui state
 
 local numSines = 32
 
@@ -285,6 +286,9 @@ function init()
     o[i] = OscState.new()
     engine.am_mul(i, 0)
     engine.am_add(i, 1)
+    engine.amp_atk(i, 5.0)
+    engine.amp_atk(i, 5.0)
+    engine.hz_lag(i, 1.0)
   end
   
   local p_pitch = poll.set('pitch_in_l', function(hz) hz_in = hz end)

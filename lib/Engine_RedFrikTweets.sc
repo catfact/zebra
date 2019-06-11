@@ -3,7 +3,8 @@ Engine_RedFrikTweets : CroneEngine {
 	classvar <numTweets;
 	classvar <numGroups;
 	var tweet_g;
-
+  	var mod;
+  
 	*initClass {
 		numGroups = 2;
 		numTweets = RedFrikTweets.tweets.size;
@@ -16,6 +17,11 @@ Engine_RedFrikTweets : CroneEngine {
 
 	alloc {
 		tweet_g = Array.newClear(2);
+		
+		mod = Array.fill(2, {Bus.control});
+		mod[0].set(100.0);
+		mod[1].set(100.0);
+		
 		this.addCommand(\tweet, "ii", { arg msg;
 			var gidx, tidx;
 			msg.postln;
@@ -26,7 +32,20 @@ Engine_RedFrikTweets : CroneEngine {
 			if(tidx >= numTweets, { tidx = numTweets - 1; });
 			if(tidx < 0, { tidx = 0; });
 			RedFrikTweets.tweets[tidx].value(tweet_g[gidx]);
+			// tweet_g[gidx].map(\mod1, mod[0]);
+			// tweet_g[gidx].map(\mod2, mod[1]);
 		});
+		
+		this.addCommand(\mod2, "if", { arg msg;
+			var idx = msg[1];
+			if (idx < 2 && idx >= 0, {
+			  mod[idx].set(msg[1]);
+			});
+		});
+		
+		this.addCommand(\volume, "f", { arg msg;
+		});
+		
 	}
 	
 	free { 
@@ -40,20 +59,20 @@ Engine_RedFrikTweets : CroneEngine {
 
 RedFrikTweets {
 
-	*tweets {
+	*tweets {\
 ^[
 		//--tweet0000
 		{
 			arg target;
 			var a, b, c, d, f, i, l, n, o, t, w, y, x, z;
-			{GlitchRHPF.ar(GbmanN.ar([2300,1150]),LFSaw.ar(Pulse.ar(4,[1,2]/8,1,LFPulse.ar(1/8)/5+1))+2)}.play(target:target)//#SuperCollider
+			{GlitchRHPF.ar(GbmanN.ar([2300 + In.kr(this.mod[0]),1150 + In.kr(this.mod[1])]),LFSaw.ar(Pulse.ar(4,[1,2]/8,1,LFPulse.ar(1/8)/5+1))+2)}.play(target:target)//#SuperCollider
 		},
 
 		//--tweet0008
 		{
 			arg target;
 			var a, b, c, d, f, i, l, n, o, t, w, y, x, z;
-			play({x=LFNoise1.ar(0.5!2);Formlet.ar(Crackle.ar(x.range(1.8,1.98)),TExpRand.ar(200,2e3,x).lag(2),x.range(5e-4,1e-3),0.0012)}, target:target)//#SuperCollider
+			play({x=LFNoise1.ar(0.5!2);Formlet.ar(Crackle.ar(x.range(1.8, In.kr(this.mod[0]) / 50.0)),TExpRand.ar(In.kr(this.mod[1]) * 4.0,2e3,x).lag(2),x.range(5e-4,1e-3),0.0012)}, target:target)//#SuperCollider
 		},
 
 		//--tweet0010
