@@ -1,4 +1,4 @@
-Engine_Zsins : CroneEngine {
+Engine_DreadMoon : CroneEngine {
 	var <pianovoice;
 	
 	*new { arg context, doneCallback;
@@ -27,23 +27,31 @@ Engine_Zsins : CroneEngine {
 
 			Out.ar(out, snd.dup);
 			DetectSilence.ar(snd, doneAction:2);
-		}).send(s);
+		}).send(Crone.server);
 
 
 		// convenience: play a piano note (num, vel)
 		this.addCommand(\piano_midi_on, "ii", {
-			pianovoice[i] = Synth.new(\comb_piano, [
+			arg msg;
+			var note, vel;
+			note = msg[1];
+			vel = msg[2];
+			pianovoice[note] = Synth.new(\comb_piano, [
 				\hz, note.midicps,
 				\amp, vel.linlin(20, 120, -20.dbamp, -18.dbamp),
 				\lpf_ratio, vel.linlin(50, 120, 1.0, 3.0),
 				\lpf_rq, vel.linlin(50, 120, 4.0, 8.0),
 				\string_decay, vel.linlin(50, 120, 4.0, 8.0),
 				\noise_hz, vel.linlin(50, 120, 2000, 4000)
-			]);<
+			], context.xg);
 		});
 
 		// convenience, stop a piano note (num, vel)
 		this.addCommand(\piano_midi_off, "ii", {
+			arg msg;
+			var note, vel;
+			note = msg[1];
+			vel = msg[2];			
 			// FIXME: does nothing!
 			// gotta implement some kind of damping...??
 		});
@@ -51,7 +59,7 @@ Engine_Zsins : CroneEngine {
 	}
 
 	free {
-		pianovoice.do({ |v| if (v.notNil, { ev.free; }); });
+		pianovoice.do({ |v| if (v.notNil, { v.free; }); });
 	}
 	
 }
