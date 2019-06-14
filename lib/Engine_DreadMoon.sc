@@ -1,4 +1,4 @@
-Engine_Zsins : CroneEngine {
+Engine_DreadMoon : CroneEngine {
 	var <pianovoice;
 	
 	*new { arg context, doneCallback;
