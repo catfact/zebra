@@ -9,6 +9,7 @@ Engine_DreadMoon : CroneEngine {
 	
 	var num_shift = 2;
 	var shift_del_maxtime = 8.0;
+
 	
 	*new { arg context, doneCallback;
 		^super.new(context, doneCallback);
