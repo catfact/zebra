@@ -10,7 +10,6 @@ Engine_DreadMoon : CroneEngine {
 	var num_shift = 2;
 	var shift_del_maxtime = 8.0;
 
-	
 	*new { arg context, doneCallback;
 		^super.new(context, doneCallback);
 	}
@@ -42,7 +41,7 @@ Engine_DreadMoon : CroneEngine {
 		}).send(Crone.server);
 
 
-		// simple, moogish monosynth voice
+		// simple, moogish FM synth voice
 		SynthDef.new(\fm_organ, {			
 			arg out=0, amp=1.0,
 			hz1, hz2, shape1=0, shape2=0,
@@ -62,14 +61,27 @@ Engine_DreadMoon : CroneEngine {
 			Out.ar(out, (snd * LagUD.ar(K2A.ar(amp, amp_atk, amp_rel))).dup);
 		}).send(Crone.server);
 
+		
 		// granular pitch-shift, with delay
 		SynthDef.new (\shift_del, {
 			arg buf, out=0, amp=1.0, time=0.6, ratio=2.0,
-			windowSize = 0.2, pitchDispersion = 0.0, timeDispersion = 0.1;
-			var snd = PitchShift.ar(BufDelayL.ar(buf, SoundIn.ar([0,1]), time),
-				windowSize:windowSize, pitchDispersion:pitchDispersion, timeDispersion:timeDispersion,
-				pitchRatio:ratio);
-			Out.ar(out, Mix.new(snd)*amp);
+			window_size = 0.2,
+			pitch_dispersion = 0.0,
+			time_dispersion = 0.1,
+			lpf_fc=4000, lpf_gain=0.0,
+			hpf_fc = 30;
+			var input, snd;
+			input = Mix.new(SoundIn.ar([0,1]));
+			input = BufDelayL.ar(buf, input, time);
+			snd = PitchShift.ar(
+				input,
+				windowSize:window_size,				
+				pitchRatio:ratio,
+				pitchDispersion:pitch_dispersion,
+				timeDispersion:time_dispersion);
+			snd = MoogFF.ar(snd, lpf_fc, lpf_gain);
+			snd = HPF.ar(snd, hpf_fc);
+			Out.ar(out, (snd * amp).dup);
 		}).send(Crone.server);
 
 
@@ -90,6 +102,20 @@ Engine_DreadMoon : CroneEngine {
 			], context.xg);
 		});
 
+		// convenience: play an organ note (num, vel)
+		this.addCommand(\organ_on, "ii", {
+			arg msg;
+			var note, vel;
+			note = msg[1];
+			vel = msg[2];
+			//[note, vel].postln;
+			organ_voice[note] = Synth.new(\organ, [
+				\hz, note.midicps * 2.0,
+				\amp, vel.linlin(20, 120, -20.dbamp, -18.dbamp),
+			], context.xg);
+		});
+
+
 		// convenience, stop a piano note (num, vel)
 		this.addCommand(\piano_midi_off, "ii", {
 			arg msg;
@@ -103,15 +129,30 @@ Engine_DreadMoon : CroneEngine {
 			});
 		});
 
-		
+		// shift-delay parameters
+		[
+			\amp, \time, \ratio,
+			\window_size, \pitch_dispersion, \time_dispersion,
+			\lpf_fc, \lpf_gain, \hpf_fc
+		].do({
+			arg param;
+			this.addCommand(("shift_" ++ param.asString).asSymbol, "if", {
+				arg msg;
+				shift_del_voice[msg[1]-1].set(param, msg[2]);
+			});
+		});
+
+		/*
 		this.addCommand(\shift_amp, "if", {
 			arg msg;
+			msg.postln;
 			shift_del_voice[msg[1]-1].set(\amp, msg[2]);
 		});
 
 		
 		this.addCommand(\shift_del_time, "if", {
 			arg msg;
+			msg.postln;
 			shift_del_voice[msg[1]-1].set(\time, msg[2]);
 		});
 
@@ -120,18 +161,23 @@ Engine_DreadMoon : CroneEngine {
 			msg.postln;
 			shift_del_voice[msg[1]-1].set(\ratio, msg[2]);
 		});
-	
+		*/
+
+		
+		
 		piano_voice = Array.newClear(128);
 		organ_voice = Array.newClear(128);
 
 		shift_del_buf = Array.fill(num_shift, {
 			Buffer.alloc(Crone.server, shift_del_maxtime * Crone.server.sampleRate, 1);
 		});
+
+		Crone.server.sync;
 		
 		shift_del_voice = Array.fill(num_shift, { |i|
 			Synth.new(\shift_del, [\amp, 0, \buf, shift_del_buf[i].bufnum], context.xg)
 		});
-		
+			
 	}
 
 	free {

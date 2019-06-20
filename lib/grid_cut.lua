@@ -106,7 +106,6 @@ gc.draw_grid = function (g)
             g:led(3, y+4, 2)
         end
 
-
         --- columns 5-8: feed
         for j=1,4 do
             if gc.state.feed[y][j] > 0 then 

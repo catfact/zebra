@@ -1,4 +1,4 @@
--- scriptname: sins
+-- scriptname: crowns
 -- v0.0.0 @catfact / @zebra
 
 
