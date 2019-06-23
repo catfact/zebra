@@ -71,6 +71,7 @@ local songs = {
 	 engine.shift_lpf_fc(1, 8000)
 	 engine.shift_amp(2, 0)
 	 softcut_reset()
+	 audio.level_monitor(0)
       end,
    },
    wolf = {
@@ -90,6 +91,7 @@ local songs = {
 	 engine.shift_lpf_fc(2, 2000)
 	 engine.shift_hpf_fc(2, 200)
 	 softcut_reset()
+	 audio.level_monitor(0)
       end,            
    },
    callout = {
@@ -103,16 +105,19 @@ local songs = {
 	 engine.shift_time_dispersion(1, 0.71 * 0.25)
 	 engine.shift_amp(2, 0.0)
 	 
-	 softcut_reset()
-	 
+	 softcut_reset()	 
 	 softcut.level(1, 1.0)
 	 softcut.loop_start(1, 1.0)		    
 	 softcut.loop_start(1, 2.42)
 	 softcut.position(1, 1.0)
+	 audio.level_monitor(0)
       end,            
    },
    other = {
       perform = function()
+	 engine.shift_amp(1, 0)
+	 engine.shift_amp(2, 0)
+	 audio.level_monitor(1)
 	 softcut_reset()
       end,            
    }
