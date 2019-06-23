@@ -3,6 +3,24 @@
 
 engine.name = 'DreadMoon'
 
+--------------
+--- params
+cs_CUT1 = controlspec.new(50,5000,'exp',0,800,'hz')
+params:add{type="control",id="fc1",controlspec=cs_CUT1,
+	   action=function(x) engine.shift_lpf_fc(1, x) end}
+
+cs_CUT1 = controlspec.new(50,5000,'exp',0,800,'hz')
+params:add{type="control",id="fc2",controlspec=cs_CUT1,
+	   action=function(x) engine.shift_lpf_fc(2, x) end}
+
+cs_GAIN = controlspec.new(0,4,'lin',0,1,'')
+params:add{type="control",id="gain",controlspec=cs_GAIN,
+	   action=function(x)
+	      engine.shift_lpf_gain(1, x)
+	      engine.shift_lpf_gain(2, x)
+end}
+
+
 -----------
 --- helpers
 
@@ -161,7 +179,15 @@ local function midi_event(data)
    end
 end
 
-function enc(n,z)
+function enc(n,delta)
+   if n == 1 then
+      params:delta("gain", delta)      
+   elseif n == 2 then
+      params:delta("fc1", delta)
+   elseif n == 3 then
+      params:delta("fc2", delta)
+   end
+   redraw()
 end
 
 function key(n,z)
@@ -184,11 +210,22 @@ end
 
 function redraw()
    screen.clear()
+
    screen.level(15)
    screen.aa(0)
    screen.font_face(40)
    screen.font_size(12)
-   screen.move(20, 20)
+   screen.move(10, 10)
    screen.text(song)
+
+   screen.level(10)
+   screen.font_size(10)
+   screen.move(20,30)
+   screen.text("f1: ".. params:string("fc1"))
+   screen.move(20,40)
+   screen.text("f2: ".. params:string("fc2"))
+   screen.move(20,50)
+   screen.text("g:  ".. params:string("gain"))
+   
    screen.update()
 end
