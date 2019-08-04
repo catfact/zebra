@@ -79,7 +79,7 @@ function init()
 -- cut global
 audio.level_cut(1.0)
 audio.level_adc_cut(1)
-audio.level_ext_cut(1)
+audio.level_eng_cut(1)
 
 -- cut voice 1
 sc.level(1, 1.0)
