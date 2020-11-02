@@ -76,68 +76,85 @@ end
 
 function init()
   
--- cut global
-audio.level_cut(1.0)
-audio.level_adc_cut(1)
-audio.level_ext_cut(1)
+  -- cut global
+  audio.level_cut(1.0)
+  audio.level_adc_cut(1)
+  audio.level_eng_cut(1)
 
--- cut voice 1
-sc.level(1, 1.0)
-sc.play(1, 1.0)
-sc.rec(1, 1.0)
-sc.level_input_cut(1, 1, 1.0)
-sc.level_input_cut(2, 1, 1.0)
-sc.pan(1, 0.5)
+  -- cut voice 1
+  sc.level(1, 1.0)
+  sc.play(1, 1.0)
+  sc.rec(1, 1.0)
+  sc.level_input_cut(1, 1, 1.0)
+  sc.level_input_cut(2, 1, 1.0)
+  sc.pan(1, 0.5)
 
-sc.loop_start(1, 1)
-sc.loop_end(1, 3.0)
-sc.loop(1, 1)
+  sc.loop_start(1, 1)
+  sc.loop_end(1, 3.0)
+  sc.loop(1, 1)
 
-sc.loop_start(1, 1)
-sc.loop_end(1, 3.0)
-sc.loop(1, 1)
-sc.position(1, 1)
-sc.enable(1, 1)
+  sc.loop_start(1, 1)
+  sc.loop_end(1, 3.0)
+  sc.loop(1, 1)
+  sc.position(1, 1)
+  sc.enable(1, 1)
 
-sc.fade_time(1, 0.1)
+  sc.fade_time(1, 0.1)
+  sc.recpre_slew_time(1, 0.2)
 
-sc.filter_dry(1, 1.0);
-sc.filter_fc(1, 1200);
-sc.filter_lp(1, 0);
-sc.filter_bp(1, 0.0);
-sc.filter_rq(1, 20.0);
+  sc.filter_dry(1, 1.0);
+  sc.filter_fc(1, 1200);
+  sc.filter_lp(1, 0);
+  sc.filter_bp(1, 0.0);
+  sc.filter_rq(1, 20.0);
 
--- cut voice 2
-sc.level(2,1.0)
-sc.play(2, 1.0)
-sc.rec(2, 1.0)
-sc.level_input_cut(1, 2, 1.0)
-sc.level_input_cut(2, 2, 1.0)
+  -- cut voice 2
+  sc.level(2,1.0)
+  sc.play(2, 1.0)
+  sc.rec(2, 1.0)
+  sc.level_input_cut(1, 2, 1.0)
+  sc.level_input_cut(2, 2, 1.0)
 
-sc.pan(2, -0.5)
+  sc.pan(2, -0.5)
 
-sc.buffer (2, 2)
+  sc.buffer (2, 2)
 
-sc.loop_start(2, 1)
-sc.loop_end(2, 3.0)
-sc.loop(2, 1)
+  sc.loop_start(2, 1)
+  sc.loop_end(2, 3.0)
+  sc.loop(2, 1)
 
-sc.position(2, 1)
-sc.enable(2, 1)
+  sc.position(2, 1)
+  sc.enable(2, 1)
 
-sc.filter_dry(2, 1.0);
-sc.filter_fc(2, 1200);
-sc.filter_lp(2, 0);
-sc.filter_bp(2, 0.0);
-sc.filter_rq(2, 20.0);
+  sc.fade_time(2, 0.1)
+  sc.recpre_slew_time(2, 0.2)
 
-    sc.rec_level(1, 0.25)
-    sc.rec_level(2, 0.25)
+  sc.filter_dry(2, 1.0);
+  sc.filter_fc(2, 1200);
+  sc.filter_lp(2, 0);
+  sc.filter_bp(2, 0.0);
+  sc.filter_rq(2, 20.0);
 
-------
--- cross
-sc.level_cut_cut(1, 2, 0.25)
-sc.level_cut_cut(2, 1, 0.25)
-sc.buffer_clear()
 
-end
+  ----------
+  --- record!
+  sc.rec_level(1, 0.25)
+  sc.rec_level(2, 0.25)
+
+  ------
+  -- cross
+  sc.level_cut_cut(1, 2, 0.25)
+  sc.level_cut_cut(2, 1, 0.25)
+  sc.buffer_clear()
+
+  -------
+  --- engine
+
+  -- currently, no sines are playing by default.
+  -- initialize some from the REPL if desired
+  -- e.g.:
+  -- engine.amp(1, 0.25)
+  -- engine.hz(1, 220)
+  -- engine.pan(1, 0)
+
+end -- init function
