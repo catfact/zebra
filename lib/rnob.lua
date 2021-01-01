@@ -83,11 +83,11 @@ for k,v in pairs(bval) do
 end
 
 
-for k,v in pairs(nob) do 
-  if v[1] == -1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
-  if v[1] == 0 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
-  if v[1] == 1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
-end
+-- for k,v in pairs(nob) do 
+--   if v[1] == -1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
+--   if v[1] == 0 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
+--   if v[1] == 1 and v[2] == 1 then print(k, v[1], v[2], v[3]) end
+-- end
 
 bval = nil
 return nob
