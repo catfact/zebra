@@ -14,7 +14,7 @@ function sc_init()
     local loop_end = {30, 40 + 28, 80 + 27, 120 + 26, 140, 300}
     local buffer = {1, 1, 1, 1, 2, 2}
     local loop = { 1, 1, 1, 1, 0, 0}
-
+    
     --- cut voices
     for i=1,6 do
       sc.rec_offset(i, -0.06)
@@ -40,7 +40,7 @@ function sc_init()
 
       sc.fade_time(1, i + 2)
       sc.loop(i, loop[i])
-
+      sc.rate_slew_time(i, 0.4) 
       sc.position(i, loop_start[i])
 
       for j=1,4 do
@@ -103,16 +103,21 @@ function note_on(num)
   if midi_note_count > 4 then return end
   local d = num - 62
   local oct = math.pow(2, math.floor(d / 12))
-  local ratio = scale[d % 12]
-  local rate = ratio[1] / ratio[2] * oct
+  deg = (d % 12) + 1
+  print("degree: " .. deg)
+  local ratio = scale[deg]
+  --local rate = ratio[1] / ratio[2] * oct
+  ratio = ratio * oct
   print("setting ratio " .. midi_note_count .. " = " .. ratio)
   sc.rate(midi_note_count, ratio)
 end
 
 function note_off(num)
-  midi_note_count = midi_note_count + 1
+  midi_note_count = midi_note_count - 1
 end
 
+
+base_rates ={0.25, 0.5, 1, 1, 1, 1}
 function g.key(x, y, z)
   --print(""..x.." "..y.." "..z)
   if z == 0 then return end
@@ -127,7 +132,7 @@ function g.key(x, y, z)
   elseif y == 4 then
     toggle_pre(x)
   elseif y == 5 then
-     -- ??
+    sc.rate(x, base_rates[x])
   elseif y == 6 then
     -- ??
   end
@@ -159,6 +164,7 @@ end
 function grid_redraw()
   for i=1,6 do
     g:led(i, 1, 1)
+    g:led(i, 5, 1)
     if voice_state[i].play > 0 then 
       g:led(i, 2, 15)
     else 
